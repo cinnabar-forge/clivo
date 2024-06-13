@@ -1,0 +1,22 @@
+{
+  "cinnabarMetaVersion": 1,
+  "description": "Simple CLI tools library",
+  "name": "Clivo",
+  "stack": {
+    "nodejs": {
+      "outputFile": [
+        "src",
+        "cinnabar.js"
+      ],
+      "package": "clivo"
+    }
+  },
+  "version": {
+    "major": 0,
+    "minor": 0,
+    "patch": 0,
+    "revision": null,
+    "text": "0.0.0",
+    "timestamp": 0
+  }
+}

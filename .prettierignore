@@ -1,0 +1,21 @@
+# General
+**/.git
+**/.svn
+**/.hg
+
+# Binaries
+/bin
+
+# Devcontainer
+.devcontainer
+
+# Node.js
+**/node_modules
+package-lock.json
+
+# Distributions
+/dist
+
+# Cinnabar Forge
+cinnabar.js
+cinnabar.json
