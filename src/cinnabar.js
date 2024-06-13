@@ -15,10 +15,10 @@ export default {
   },
   "version": {
     "major": 0,
-    "minor": 0,
+    "minor": 1,
     "patch": 0,
-    "revision": null,
-    "text": "0.0.0",
-    "timestamp": 0
+    "revision": 1,
+    "text": "0.1.0",
+    "timestamp": 1718294648
   }
 };
