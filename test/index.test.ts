@@ -141,11 +141,11 @@ describe("Prompt Functions", () => {
       questionStub.yields("2");
 
       const choice = await promptOptions("Choose an option:", [
-        "Option 1",
-        "Option 2",
-        "Option 3",
+        { name: "opt1", label: "Option 1" },
+        { name: "opt2", label: "Option 2" },
+        { name: "opt3", label: "Option 3" },
       ]);
-      expect(choice).to.equal("Option 2");
+      expect(choice.name).to.equal("opt2");
     });
 
     it("should throw an error for invalid option", async () => {
@@ -154,9 +154,9 @@ describe("Prompt Functions", () => {
 
       try {
         await promptOptions("Choose an option:", [
-          "Option 1",
-          "Option 2",
-          "Option 3",
+          { name: "opt1", label: "Option 1" },
+          { name: "opt2", label: "Option 2" },
+          { name: "opt3", label: "Option 3" },
         ]);
       } catch (e) {
         expect(e.message).to.equal("Invalid option, please try again.");
@@ -195,9 +195,9 @@ describe("Prompt Functions", () => {
 
   describe("promptWorkflow", () => {
     it("should execute a workflow and return the results", async () => {
-      questionStub.onCall(0).yields("User text");
-      questionStub.onCall(1).yields("100");
-      questionStub.onCall(2).yields("2");
+      questionStub.onCall(0).yields("Tim");
+      questionStub.onCall(1).yields("28");
+      questionStub.onCall(2).yields("3");
 
       const workflow: ClivoWorkflowStep[] = [
         { type: "text", message: "Enter your name" },
@@ -205,12 +205,20 @@ describe("Prompt Functions", () => {
         {
           type: "options",
           message: "Choose a color",
-          choices: ["Red", "Green", "Blue"],
+          choices: [
+            { name: "red", label: "Red" },
+            { name: "green", label: "Green" },
+            { name: "blue", label: "Blue" },
+          ],
         },
       ];
 
       const results = await promptWorkflow("Start workflow", workflow);
-      expect(results).to.deep.equal(["User text", 100, "Green"]);
+      expect(results).to.deep.equal([
+        "Tim",
+        28,
+        { name: "blue", label: "Blue" },
+      ]);
     });
   });
 
@@ -221,9 +229,13 @@ describe("Prompt Functions", () => {
       questionStub.onCall(2).yields("3");
 
       const dynamicOptions = async () => {
-        const options = ["Option 1", "Option 2", "Option 3"];
+        const options = [
+          { name: "opt1", label: "Option 1" },
+          { name: "opt2", label: "Option 2" },
+          { name: "opt3", label: "Option 3" },
+        ];
         const choice = await promptOptions("Choose an option:", options);
-        console.log(`You chose: ${choice}`);
+        console.log(`You chose: ${choice.label}`);
       };
 
       const workspacesMenu = async () => {

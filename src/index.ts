@@ -17,11 +17,21 @@ export type ClivoDictionaryType = string | true;
 
 export type ClivoDictionary = Record<string, ClivoDictionaryType[]>;
 
+export type ClivoAction = {
+  name: string;
+  action: () => Promise<void>;
+};
+
+export type ClivoChoice = {
+  name: string;
+  label?: string;
+};
+
 export type ClivoWorkflowType = "options" | "text" | "number";
 export type ClivoWorkflowStep = {
   type: ClivoWorkflowType;
   message: string;
-  choices?: string[];
+  choices?: ClivoChoice[];
 };
 
 /**
@@ -96,16 +106,16 @@ export function parseOptions(params: ClivoParams): ClivoDictionary {
 /**
  * Prompts the user to select an option from a list of choices.
  * @param {string} message - The message to display to the user.
- * @param {string[]} choices - The list of choices to present to the user.
- * @returns {Promise<string>} The selected choice.
+ * @param {ClivoChoice[]} choices - The list of choices to present to the user.
+ * @returns {Promise<ClivoChoice>} The selected choice.
  */
 export async function promptOptions(
   message: string,
-  choices: string[],
-): Promise<string> {
+  choices: ClivoChoice[],
+): Promise<ClivoChoice> {
   return new Promise(
     (
-      resolve: (value: string) => void,
+      resolve: (value: ClivoChoice) => void,
       reject: (reason?: any) => void,
     ): void => {
       const rl = readline.createInterface({
@@ -182,7 +192,7 @@ export async function promptNumber(message: string): Promise<number> {
 /**
  * Handles complex workflows with menus and multiple input types.
  * @param {string} message - The message to display to the user.
- * @param {Array<{ type: ClivoWorkflowType, message: string, choices?: string[] }>} workflow - The workflow to execute.
+ * @param {Array<ClivoWorkflowStep>} workflow - The workflow to execute.
  * @returns {Promise<any[]>} The results of the workflow.
  */
 export async function promptWorkflow(
@@ -211,15 +221,19 @@ export async function promptWorkflow(
 /**
  * Handles nested menus with dynamic options.
  * @param {string} message - The message to display to the user.
- * @param {Array<{ name: string, action: () => Promise<void> }>} menu - The menu options and their corresponding actions.
+ * @param {Array<ClivoAction>} menu - The menu options and their corresponding actions.
  */
 export async function promptMenu(
   message: string,
-  menu: Array<{ name: string; action: () => Promise<void> }>,
+  menu: Array<ClivoAction>,
 ): Promise<void> {
-  const choices = menu.map((item) => item.name);
+  const choices: ClivoChoice[] = menu.map((item) => {
+    return {
+      name: item.name,
+    };
+  });
   const choice = await promptOptions(message, choices);
-  const selectedItem = menu.find((item) => item.name === choice);
+  const selectedItem = menu.find((item) => item.name === choice.name);
   if (selectedItem) {
     await selectedItem.action();
   }
