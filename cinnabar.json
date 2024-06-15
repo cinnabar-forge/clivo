@@ -13,10 +13,10 @@
   },
   "version": {
     "major": 0,
-    "minor": 2,
+    "minor": 3,
     "patch": 0,
-    "revision": 2,
-    "text": "0.2.0",
-    "timestamp": 1718354313
+    "revision": 3,
+    "text": "0.3.0",
+    "timestamp": 1718486202
   }
 }
