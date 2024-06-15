@@ -18,22 +18,28 @@ npm install clivo
 
 ### Usage
 
-#### Parsing CLI options
+#### Parsing CLI arguments
+
+You can assign one or multiple variables to an option in any fashion:
 
 ```javascript
-const result = parseOptions({
-  cli: ["node", "index.js", "--standalone", "--anotherOption"],
-  options: [{ name: "standalone" }, { name: "anotherOption" }],
+const result = parseCli({
+  args: ["node", "index.js", "-t", "--order=burger", "cola", "-o=fries", "-o", "salad"], // sample process.argv input
+  options: [
+    { name: "order", letter: "o" },
+    { name: "takeout", letter: "t" },
+  ],
 });
+// result = { takeout: [ 'yes' ], order: [ 'burger', 'cola', 'fries', 'salad' ] }
 ```
 
 #### Prompt
 
 ```javascript
 const choice = await promptOptions("Choose an option:", [
-  "Option 1",
-  "Option 2",
-  "Option 3",
+  { name: "opt1", label: "Option 1" },
+  { name: "opt2", label: "Option 2" },
+  { name: "opt3", label: "Option 3" },
 ]);
 ```
 
@@ -52,7 +58,11 @@ const workflow = [
   {
     type: "options",
     message: "Choose a color",
-    choices: ["Red", "Green", "Blue"],
+    choices: [
+      { name: "red", label: "Red" },
+      { name: "green", label: "Green" },
+      { name: "blue", label: "Blue" },
+    ],
   },
 ];
 

@@ -4,18 +4,16 @@ export type ClivoOption = {
   name: string;
   label?: string;
   letter?: string;
-  value?: boolean;
 };
 
 export type ClivoParams = {
-  cli: string[];
+  args: string[];
+  parseFrom?: number;
   options: ClivoOption[];
   acceptUnspecifiedOptions?: boolean;
 };
 
-export type ClivoDictionaryType = string | true;
-
-export type ClivoDictionary = Record<string, ClivoDictionaryType[]>;
+export type ClivoDictionary = Record<string, string[]>;
 
 export type ClivoAction = {
   name: string;
@@ -35,34 +33,13 @@ export type ClivoWorkflowStep = {
 };
 
 /**
- * Adds values to a key in the ClivoDictionary.
- * @param {ClivoDictionary} keyValues - The dictionary to add values to.
- * @param {string} key - The key to add values to.
- * @param {ClivoDictionaryType[]} values - The values to add.
- */
-function addValues(
-  keyValues: ClivoDictionary,
-  key: string,
-  values: ClivoDictionaryType[],
-): void {
-  if (!keyValues[key]) {
-    keyValues[key] = [];
-  }
-  if (values.length > 0) {
-    keyValues[key].push(...values);
-  } else {
-    keyValues[key].push(true);
-  }
-}
-
-/**
  * Parses CLI options into a dictionary.
  * @param {ClivoParams} params - The parameters for parsing options.
  * @returns {ClivoDictionary} - The parsed options as a dictionary.
  */
-export function parseOptions(params: ClivoParams): ClivoDictionary {
+export function parseCli(params: ClivoParams): ClivoDictionary {
   const keyValues: ClivoDictionary = {};
-  const args = params.cli.slice(2);
+  const args = params.args.slice(params.parseFrom || 2);
   const nameByLetter: Record<string, string> = {};
 
   const optionNames = new Set<string>();
@@ -82,23 +59,78 @@ export function parseOptions(params: ClivoParams): ClivoDictionary {
     }
   }
 
-  for (let i = 0; i < args.length; i++) {
-    if (args[i].startsWith("--")) {
-      const [key, ...values] = args[i].slice(2).split("=");
+  let followOptions: string[] | null = null;
+  let followValue: any;
+
+  const addValue = (key: string, value: string) => {
+    if (!keyValues[key]) {
+      keyValues[key] = [];
+    }
+    keyValues[key].push(value);
+  };
+
+  const addValues = (key: string, values: string[]) => {
+    if (!keyValues[key]) {
+      keyValues[key] = [];
+    }
+    if (values.length > 0) {
+      keyValues[key].push(...values);
+    } else {
+      keyValues[key].push("yes");
+    }
+  };
+
+  const addFollowOptions = (value?: string) => {
+    for (const key of followOptions) {
       if (optionNames.has(key) || params.acceptUnspecifiedOptions) {
-        addValues(keyValues, key, values);
-      }
-    } else if (args[i].startsWith("-")) {
-      const letters = args[i].slice(1);
-      for (const letter of letters) {
-        if (nameByLetter[letter]) {
-          const key = nameByLetter[letter];
-          addValues(keyValues, key, [true]);
-        } else if (params.acceptUnspecifiedOptions) {
-          addValues(keyValues, letter, [true]);
+        if (value != null) {
+          addValue(key, value);
+        } else if (keyValues[key] == null) {
+          addValue(key, "yes");
         }
       }
     }
+  };
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i].startsWith("--")) {
+      if (followOptions != null) {
+        addFollowOptions();
+      }
+      const [key, ...values] = args[i].slice(2).split("=");
+      followOptions = [key];
+
+      if (values.length > 0) {
+        if (optionNames.has(key) || params.acceptUnspecifiedOptions) {
+          addValues(key, values);
+        }
+      }
+    } else if (args[i].startsWith("-")) {
+      if (followOptions != null) {
+        addFollowOptions();
+      }
+      followOptions = null;
+      const [letters, ...values] = args[i].slice(1).split("=");
+      for (const letter of letters) {
+        const key =
+          nameByLetter[letter] || (params.acceptUnspecifiedOptions && letter);
+        if (key) {
+          if (followOptions == null) {
+            followOptions = [];
+          }
+          if (values.length > 0) {
+            addValues(key, values);
+          } else {
+            followOptions.push(key);
+          }
+        }
+      }
+    } else if (followOptions != null) {
+      addFollowOptions(args[i]);
+    }
+  }
+  if (followOptions != null) {
+    addFollowOptions();
   }
   return keyValues;
 }

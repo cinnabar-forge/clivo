@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import {
-  parseOptions,
+  parseCli,
   promptMenu,
   promptNumber,
   promptOptions,
@@ -11,62 +11,143 @@ import {
 import readline from "readline";
 import sinon from "sinon";
 
-describe("parseOptions", () => {
+describe("parseCli", () => {
   it("should parse long options without values", () => {
-    const result = parseOptions({
-      cli: ["node", "index.js", "--standalone", "--anotherOption"],
+    const result = parseCli({
+      args: ["node", "index.js", "--standalone", "--anotherOption"],
       options: [{ name: "standalone" }, { name: "anotherOption" }],
     });
-    expect(result.standalone[0]).to.be.true;
-    expect(result.anotherOption[0]).to.be.true;
+    expect(result.standalone[0]).to.be.equal("yes");
+    expect(result.anotherOption[0]).to.be.equal("yes");
   });
 
   it("should parse long options with values", () => {
-    const result = parseOptions({
-      cli: ["node", "index.js", "--withValue=hehe1=hehe2=hehe3"],
-      options: [{ name: "withValue", value: true }],
+    const result = parseCli({
+      args: [
+        "node",
+        "index.js",
+        "--withValue=hehe1=hehe2=hehe3",
+        "--alsoValue=almond",
+      ],
+      options: [{ name: "withValue" }, { name: "alsoValue" }],
     });
     expect(result.withValue[0]).to.be.equal("hehe1");
     expect(result.withValue[1]).to.be.equal("hehe2");
     expect(result.withValue[2]).to.be.equal("hehe3");
+    expect(result.alsoValue[0]).to.be.equal("almond");
+  });
+
+  it("should parse long options with values and alternative assignment", () => {
+    const result = parseCli({
+      args: [
+        "node",
+        "index.js",
+        "--withValue",
+        "hehe1",
+        "hehe2",
+        "hehe3",
+        "--alsoValue",
+        "almond",
+      ],
+      options: [{ name: "withValue" }, { name: "alsoValue" }],
+    });
+    expect(result.withValue[0]).to.be.equal("hehe1");
+    expect(result.withValue[1]).to.be.equal("hehe2");
+    expect(result.withValue[2]).to.be.equal("hehe3");
+    expect(result.alsoValue[0]).to.be.equal("almond");
+  });
+
+  it("should parse long options with values and mixed assignment 1", () => {
+    const result = parseCli({
+      args: [
+        "node",
+        "index.js",
+        "--withValue",
+        "hehe1",
+        "hehe2",
+        "hehe3",
+        "--alsoValue=almond",
+      ],
+      options: [{ name: "withValue" }, { name: "alsoValue" }],
+    });
+    expect(result.withValue[0]).to.be.equal("hehe1");
+    expect(result.withValue[1]).to.be.equal("hehe2");
+    expect(result.withValue[2]).to.be.equal("hehe3");
+    expect(result.alsoValue[0]).to.be.equal("almond");
+  });
+
+  it("should parse long options with values and mixed assignment 2", () => {
+    const result = parseCli({
+      args: [
+        "node",
+        "index.js",
+        "--withValue=hehe1",
+        "hehe2",
+        "hehe3",
+        "--alsoValue=almond",
+      ],
+      options: [{ name: "withValue" }, { name: "alsoValue" }],
+    });
+    expect(result.withValue[0]).to.be.equal("hehe1");
+    expect(result.withValue[1]).to.be.equal("hehe2");
+    expect(result.withValue[2]).to.be.equal("hehe3");
+    expect(result.alsoValue[0]).to.be.equal("almond");
+  });
+
+  it("should parse long options with values and mixed assignment 3", () => {
+    const result = parseCli({
+      args: [
+        "node",
+        "index.js",
+        "--withValue=hehe1=hehe2",
+        "hehe3",
+        "--alsoValue",
+        "almond",
+      ],
+      options: [{ name: "withValue" }, { name: "alsoValue" }],
+    });
+    expect(result.withValue[0]).to.be.equal("hehe1");
+    expect(result.withValue[1]).to.be.equal("hehe2");
+    expect(result.withValue[2]).to.be.equal("hehe3");
+    expect(result.alsoValue[0]).to.be.equal("almond");
   });
 
   it("should parse short options without values", () => {
-    const result = parseOptions({
-      cli: ["node", "index.js", "-s", "-a"],
+    const result = parseCli({
+      args: ["node", "index.js", "-s", "-a"],
       options: [
         { name: "standalone", letter: "s" },
         { name: "anotherOption", letter: "a" },
       ],
     });
-    expect(result.standalone[0]).to.be.true;
-    expect(result.anotherOption[0]).to.be.true;
+    expect(result.standalone[0]).to.be.equal("yes");
+    expect(result.anotherOption[0]).to.be.equal("yes");
   });
 
   it("should parse combined short options", () => {
-    const result = parseOptions({
-      cli: ["node", "index.js", "-sa"],
+    const result = parseCli({
+      args: ["node", "index.js", "-sa"],
       options: [
         { name: "standalone", letter: "s" },
         { name: "anotherOption", letter: "a" },
       ],
     });
-    expect(result.standalone[0]).to.be.true;
-    expect(result.anotherOption[0]).to.be.true;
+    expect(result.standalone[0]).to.be.equal("yes");
+    expect(result.anotherOption[0]).to.be.equal("yes");
   });
 
   it("should handle unspecified options when acceptUnspecifiedOptions is true", () => {
-    const result = parseOptions({
-      cli: ["node", "index.js", "--unspecified"],
+    const result = parseCli({
+      args: ["node", "index.js", "--unspecified"],
       options: [],
       acceptUnspecifiedOptions: true,
     });
-    expect(result.unspecified[0]).to.be.true;
+    expect(result.unspecified[0]).to.be.equal("yes");
   });
 
   it("should ignore unspecified options when acceptUnspecifiedOptions is false", () => {
-    const result = parseOptions({
-      cli: ["node", "index.js", "--unspecified"],
+    const result = parseCli({
+      args: ["node", "index.js", "--unspecified"],
       options: [],
       acceptUnspecifiedOptions: false,
     });
@@ -74,36 +155,78 @@ describe("parseOptions", () => {
   });
 
   it("should handle duplicate options", () => {
-    const result = parseOptions({
-      cli: ["node", "index.js", "--duplicate", "--duplicate=value"],
+    const result = parseCli({
+      args: ["node", "index.js", "--duplicate", "--duplicate=value"],
       options: [{ name: "duplicate" }],
     });
-    expect(result.duplicate[0]).to.be.true;
+    expect(result.duplicate[0]).to.be.equal("yes");
     expect(result.duplicate[1]).to.be.equal("value");
   });
 
   it("should handle mixed short and long options", () => {
-    const result = parseOptions({
-      cli: ["node", "index.js", "-s", "--longOption"],
+    const result = parseCli({
+      args: ["node", "index.js", "-s", "--longOption"],
       options: [{ name: "shortOption", letter: "s" }, { name: "longOption" }],
     });
-    expect(result.shortOption[0]).to.be.true;
-    expect(result.longOption[0]).to.be.true;
+    expect(result.shortOption[0]).to.be.equal("yes");
+    expect(result.longOption[0]).to.be.equal("yes");
   });
 
-  it("should handle options with equal signs in values", () => {
-    const result = parseOptions({
-      cli: ["node", "index.js", "--option=part1=part2"],
-      options: [{ name: "option", value: true }],
+  it("should handle value to short option 1", () => {
+    const result = parseCli({
+      args: ["node", "index.js", "-s=hehe"],
+      options: [{ name: "shortOption", letter: "s" }],
     });
-    expect(result.option[0]).to.be.equal("part1");
-    expect(result.option[1]).to.be.equal("part2");
+    expect(result.shortOption[0]).to.be.equal("hehe");
+  });
+
+  it("should handle value to short option 2", () => {
+    const result = parseCli({
+      args: ["node", "index.js", "-s", "hehe"],
+      options: [{ name: "shortOption", letter: "s" }],
+    });
+    expect(result.shortOption[0]).to.be.equal("hehe");
+  });
+
+  it("should handle values to short option", () => {
+    const result = parseCli({
+      args: ["node", "index.js", "-s", "hehe1", "hehe2"],
+      options: [{ name: "shortOption", letter: "s" }],
+    });
+    expect(result.shortOption[0]).to.be.equal("hehe1");
+    expect(result.shortOption[1]).to.be.equal("hehe2");
+  });
+
+  it("should handle same values to short options", () => {
+    const result = parseCli({
+      args: ["node", "index.js", "-ab", "hehe1", "hehe2"],
+      options: [
+        { name: "alpha", letter: "a" },
+        { name: "beta", letter: "b" },
+      ],
+    });
+    expect(result.alpha[0]).to.be.equal("hehe1");
+    expect(result.alpha[1]).to.be.equal("hehe2");
+    expect(result.beta[0]).to.be.equal("hehe1");
+    expect(result.beta[1]).to.be.equal("hehe2");
+  });
+
+  it("should handle same values to short options", () => {
+    const result = parseCli({
+      args: ["node", "index.js", "-a", "-b", "good"],
+      options: [
+        { name: "alpha", letter: "a" },
+        { name: "beta", letter: "b" },
+      ],
+    });
+    expect(result.alpha[0]).to.be.equal("yes");
+    expect(result.beta[0]).to.be.equal("good");
   });
 
   it("should throw error for duplicate option names", () => {
     expect(() =>
-      parseOptions({
-        cli: ["node", "index.js"],
+      parseCli({
+        args: ["node", "index.js"],
         options: [{ name: "duplicate" }, { name: "duplicate" }],
       }),
     ).to.throw(Error, "Duplicate option name: duplicate");
@@ -111,14 +234,40 @@ describe("parseOptions", () => {
 
   it("should throw error for duplicate option letters", () => {
     expect(() =>
-      parseOptions({
-        cli: ["node", "index.js"],
+      parseCli({
+        args: ["node", "index.js"],
         options: [
           { name: "firstOption", letter: "a" },
           { name: "secondOption", letter: "a" },
         ],
       }),
     ).to.throw(Error, "Duplicate option letter: a");
+  });
+
+  describe("Readme examples", () => {
+    it("should verify example", () => {
+      const result = parseCli({
+        args: [
+          "node",
+          "index.js",
+          "-t",
+          "--order=burger",
+          "cola",
+          "-o=fries",
+          "-o",
+          "salad",
+        ],
+        options: [
+          { name: "order", letter: "o" },
+          { name: "takeout", letter: "t" },
+        ],
+      });
+      expect(result.takeout[0]).to.be.equal("yes");
+      expect(result.order[0]).to.be.equal("burger");
+      expect(result.order[1]).to.be.equal("cola");
+      expect(result.order[2]).to.be.equal("fries");
+      expect(result.order[3]).to.be.equal("salad");
+    });
   });
 });
 
