@@ -24,7 +24,16 @@ You can assign one or multiple variables to an option in any fashion:
 
 ```javascript
 const result = parseCli({
-  args: ["node", "index.js", "-t", "--order=burger", "cola", "-o=fries", "-o", "salad"], // sample process.argv input
+  args: [
+    "node",
+    "index.js",
+    "-t",
+    "--order=burger",
+    "cola",
+    "-o=fries",
+    "-o",
+    "salad",
+  ], // sample process.argv input
   options: [
     { name: "order", letter: "o" },
     { name: "takeout", letter: "t" },

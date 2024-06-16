@@ -157,7 +157,7 @@ export async function promptOptions(
 
       console.log(message);
       choices.forEach((choice, index) => {
-        console.log(`${index + 1}. ${choice}`);
+        console.log(`${index + 1}. ${choice.label ?? choice.name}`);
       });
 
       rl.question("Select an option: ", (answer) => {
