@@ -16,9 +16,9 @@ export default {
   "version": {
     "major": 0,
     "minor": 3,
-    "patch": 0,
-    "revision": 3,
-    "text": "0.3.0",
-    "timestamp": 1718486202
+    "patch": 1,
+    "revision": 4,
+    "text": "0.3.1",
+    "timestamp": 1718519730
   }
 };
