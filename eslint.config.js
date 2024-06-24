@@ -4,9 +4,14 @@ export default [
   ...cinnabarPlugin.default.map((config) => ({
     ...config,
     files: ["src/**/*.ts"],
+  })),
+  {
+    files: ["src/**/*.ts"],
     rules: {
-      ...config.rules,
       "security/detect-object-injection": "off",
     },
-  })),
+  },
+  {
+    ignores: ["bin/**/*", "build/**/*", "dist/**/*"],
+  },
 ];
