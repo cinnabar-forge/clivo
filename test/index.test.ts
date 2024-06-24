@@ -12,6 +12,50 @@ import {
 import { ClivoWorkflowStep } from "../src/types.js";
 
 describe("parseCli", () => {
+  it("should parse non-option argument", () => {
+    const result = parseCli({
+      args: ["node", "index.js", "seth"],
+    });
+    expect(result["_"][0]).to.be.equal("seth");
+  });
+
+  it("should parse non-option arguments", () => {
+    const result = parseCli({
+      args: ["node", "index.js", "seth", "sobek"],
+    });
+    expect(result["_"][0]).to.be.equal("seth");
+    expect(result["_"][1]).to.be.equal("sobek");
+  });
+
+  it("should parse non-option argument before option", () => {
+    const result = parseCli({
+      args: ["node", "index.js", "seth", "--history=egypt"],
+      options: [{ name: "history" }],
+    });
+    expect(result["_"][0]).to.be.equal("seth");
+    expect(result["history"][0]).to.be.equal("egypt");
+  });
+
+  it("should parse non-option argument after boolean option (with equalSignValuesOnly)", () => {
+    const result = parseCli({
+      args: ["node", "index.js", "--history", "seth"],
+      equalSignValuesOnly: true,
+      options: [{ name: "history" }],
+    });
+    expect(result["history"][0]).to.be.equal("yes");
+    expect(result["_"][0]).to.be.equal("seth");
+  });
+
+  it("should parse non-option argument after value option (with equalSignValuesOnly)", () => {
+    const result = parseCli({
+      args: ["node", "index.js", "--history=egypt", "seth"],
+      equalSignValuesOnly: true,
+      options: [{ name: "history" }],
+    });
+    expect(result["history"][0]).to.be.equal("egypt");
+    expect(result["_"][0]).to.be.equal("seth");
+  });
+
   it("should parse long options without values", () => {
     const result = parseCli({
       args: ["node", "index.js", "--standalone", "--anotherOption"],
@@ -245,7 +289,7 @@ describe("parseCli", () => {
   });
 
   describe("Readme examples", () => {
-    it("should verify example", () => {
+    it("should verify example 1", () => {
       const result = parseCli({
         args: [
           "node",
@@ -267,6 +311,28 @@ describe("parseCli", () => {
       expect(result.order[1]).to.be.equal("cola");
       expect(result.order[2]).to.be.equal("fries");
       expect(result.order[3]).to.be.equal("salad");
+    });
+    it("should verify example 2", () => {
+      const result = parseCli({
+        args: [
+          "node",
+          "index.js",
+          "-t",
+          "--order=burger=cola=fries=salad",
+          "burger-earl",
+        ], // sample process.argv input
+        equalSignValuesOnly: true,
+        options: [
+          { name: "order", letter: "o" },
+          { name: "takeout", letter: "t" },
+        ],
+      });
+      expect(result.takeout[0]).to.be.equal("yes");
+      expect(result.order[0]).to.be.equal("burger");
+      expect(result.order[1]).to.be.equal("cola");
+      expect(result.order[2]).to.be.equal("fries");
+      expect(result.order[3]).to.be.equal("salad");
+      expect(result["_"][0]).to.be.equal("burger-earl");
     });
   });
 });
@@ -389,9 +455,9 @@ describe("Prompt Functions", () => {
 
       const workspacesMenu = async () => {
         await promptMenu("Workspaces Menu", [
-          { name: "Issues", action: dynamicOptions },
+          { label: "Issues", action: dynamicOptions },
           {
-            name: "Not Cloned",
+            label: "Not Cloned",
             action: async () => console.log("Not Cloned selected"),
           },
         ]);
@@ -399,10 +465,10 @@ describe("Prompt Functions", () => {
 
       await promptMenu("Main Menu", [
         {
-          name: "Projects",
+          label: "Projects",
           action: async () => console.log("Projects selected"),
         },
-        { name: "Workspaces", action: workspacesMenu },
+        { label: "Workspaces", action: workspacesMenu },
       ]);
 
       sinon.assert.calledWith(consoleLogStub, "You chose: Option 3");

@@ -7,7 +7,8 @@ export interface ClivoOption {
 export interface ClivoParams {
   acceptUnspecifiedOptions?: boolean;
   args: string[];
-  options: ClivoOption[];
+  equalSignValuesOnly?: boolean;
+  options?: ClivoOption[];
   parseFrom?: number;
 }
 
@@ -15,7 +16,7 @@ export type ClivoDictionary = Record<string, string[]>;
 
 export interface ClivoAction {
   action: () => Promise<void>;
-  name: string;
+  label: string;
 }
 
 export interface ClivoChoice {

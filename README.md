@@ -23,10 +23,13 @@ npm install clivo
 You can assign one or multiple variables to an option in any fashion:
 
 ```javascript
+import { parseCli } from "clivo";
+
 const result = parseCli({
   args: [
     "node",
     "index.js",
+    "burger-earl",
     "-t",
     "--order=burger",
     "cola",
@@ -39,12 +42,36 @@ const result = parseCli({
     { name: "takeout", letter: "t" },
   ],
 });
-// result = { takeout: [ 'yes' ], order: [ 'burger', 'cola', 'fries', 'salad' ] }
+// result = { _: [ 'burger-earl' ], takeout: [ 'yes' ], order: [ 'burger', 'cola', 'fries', 'salad' ] }
+```
+
+Alternatively, you can set values with equal sign only using `equalSignValuesOnly`:
+
+```javascript
+import { parseCli } from "clivo";
+
+const result = parseCli({
+  args: [
+    "node",
+    "index.js",
+    "-t",
+    "--order=burger=cola=fries=salad",
+    "burger-earl",
+  ], // sample process.argv input
+  equalSignValuesOnly: true,
+  options: [
+    { name: "order", letter: "o" },
+    { name: "takeout", letter: "t" },
+  ],
+});
+// result = { takeout: [ 'yes' ], order: [ 'burger', 'cola', 'fries', 'salad' ], _: [ 'burger-earl' ] }
 ```
 
 #### Prompt
 
 ```javascript
+import { promptOptions } from "clivo";
+
 const choice = await promptOptions("Choose an option:", [
   { name: "opt1", label: "Option 1" },
   { name: "opt2", label: "Option 2" },
@@ -53,14 +80,20 @@ const choice = await promptOptions("Choose an option:", [
 ```
 
 ```javascript
+import { promptText } from "clivo";
+
 const text = await promptText("Enter some text:");
 ```
 
 ```javascript
+import { promptNumber } from "clivo";
+
 const number = await promptNumber("Enter a number:");
 ```
 
 ```javascript
+import { promptWorkflow } from "clivo";
+
 const workflow = [
   { type: "text", message: "Enter your name" },
   { type: "number", message: "Enter your age" },
@@ -79,14 +112,16 @@ const results = await promptWorkflow("Start workflow", workflow);
 ```
 
 ```javascript
+import { promptMenu } from "clivo";
+
 await promptMenu("Main Menu", [
   {
-    name: "Projects",
     action: async () => console.log("Projects selected"),
+    label: "Projects",
   },
   {
-    name: "Workspaces",
     action: async () => console.log("Workspaces selected"),
+    label: "Workspaces",
   },
 ]);
 ```

@@ -13,17 +13,19 @@ export function parseCli(params: ClivoParams): ClivoDictionary {
   const optionNames = new Set<string>();
   const optionLetters = new Set<string>();
 
-  for (const option of params.options) {
-    if (optionNames.has(option.name)) {
-      throw new Error(`Duplicate option name: ${option.name}`);
-    }
-    optionNames.add(option.name);
-    if (option.letter) {
-      if (optionLetters.has(option.letter)) {
-        throw new Error(`Duplicate option letter: ${option.letter}`);
+  if (params.options != null) {
+    for (const option of params.options) {
+      if (optionNames.has(option.name)) {
+        throw new Error(`Duplicate option name: ${option.name}`);
       }
-      optionLetters.add(option.letter);
-      nameByLetter[option.letter] = option.name;
+      optionNames.add(option.name);
+      if (option.letter) {
+        if (optionLetters.has(option.letter)) {
+          throw new Error(`Duplicate option letter: ${option.letter}`);
+        }
+        optionLetters.add(option.letter);
+        nameByLetter[option.letter] = option.name;
+      }
     }
   }
 
@@ -49,6 +51,10 @@ export function parseCli(params: ClivoParams): ClivoDictionary {
 
   const addFollowOptions = (value?: string) => {
     if (followOptions == null) {
+      return;
+    }
+    if (params.equalSignValuesOnly && value != null) {
+      addValue("_", value);
       return;
     }
     for (const key of followOptions) {
@@ -98,6 +104,8 @@ export function parseCli(params: ClivoParams): ClivoDictionary {
       }
     } else if (followOptions != null) {
       addFollowOptions(arg);
+    } else {
+      addValue("_", arg);
     }
   }
 

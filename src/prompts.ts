@@ -126,13 +126,14 @@ export async function promptMenu(
   message: string,
   menu: ClivoAction[],
 ): Promise<void> {
-  const choices: ClivoChoice[] = menu.map((item) => {
+  const choices: ClivoChoice[] = menu.map((item, index) => {
     return {
-      name: item.name,
+      label: item.label,
+      name: "act" + (index + 1),
     };
   });
   const choice = await promptOptions(message, choices);
-  const selectedItem = menu.find((item) => item.name === choice.name);
+  const selectedItem = menu.find((item) => item.label === choice.label);
   if (selectedItem) {
     await selectedItem.action();
   }
