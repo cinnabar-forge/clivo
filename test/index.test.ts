@@ -1,15 +1,15 @@
 import { expect } from "chai";
+import readline from "readline";
+import sinon from "sinon";
+import { parseCli } from "../src/cli.js";
 import {
-  parseCli,
   promptMenu,
   promptNumber,
   promptOptions,
   promptText,
   promptWorkflow,
-  type ClivoWorkflowStep,
-} from "../src/index.js";
-import readline from "readline";
-import sinon from "sinon";
+} from "../src/prompts.js";
+import { ClivoWorkflowStep } from "../src/types.js";
 
 describe("parseCli", () => {
   it("should parse long options without values", () => {
@@ -307,7 +307,7 @@ describe("Prompt Functions", () => {
           { name: "opt2", label: "Option 2" },
           { name: "opt3", label: "Option 3" },
         ]);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).to.equal("Invalid option, please try again.");
       }
     });
@@ -336,7 +336,7 @@ describe("Prompt Functions", () => {
 
       try {
         await promptNumber("Enter a number:");
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).to.equal("Invalid number, please try again.");
       }
     });

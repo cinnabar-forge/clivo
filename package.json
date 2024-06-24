@@ -19,26 +19,26 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
-    "build:dist": "tsc -p tsconfig.dist.json",
-    "dev": "tsc-watch",
+    "build": "tsup",
+    "build:dev": "tsc",
     "format": "prettier . --write",
     "lint": "eslint --fix .",
-    "test": "eslint --max-warnings 0 . && tsc && mocha './build/main/test'"
+    "test": "eslint --max-warnings 0 . && tsc && mocha './build/dev/test'"
   },
   "devDependencies": {
-    "@cinnabar-forge/eslint-plugin": "0.5.0",
+    "@cinnabar-forge/eslint-plugin": "0.6.0",
     "@cinnabar-forge/meta": "0.1.2",
     "@types/chai": "4.3.16",
-    "@types/mocha": "10.0.6",
-    "@types/node": "20.14.2",
+    "@types/mocha": "10.0.7",
+    "@types/node": "20.14.8",
     "@types/sinon": "17.0.3",
     "chai": "5.1.1",
     "mocha": "10.4.0",
     "pre-commit": "1.2.2",
     "sinon": "18.0.0",
     "tsc-watch": "6.2.0",
-    "typescript": "5.4.5"
+    "tsup": "8.1.0",
+    "typescript": "5.5.2"
   },
   "pre-commit": [
     "format",
