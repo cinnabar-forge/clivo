@@ -6,8 +6,24 @@ import {
   promptText,
   promptWorkflow,
 } from "./prompts.js";
+import {
+  ClivoAction,
+  ClivoChoice,
+  ClivoDictionary,
+  ClivoOption,
+  ClivoParams,
+  ClivoWorkflowStep,
+  ClivoWorkflowType,
+} from "./types.js";
 
 export {
+  ClivoAction,
+  ClivoChoice,
+  ClivoDictionary,
+  ClivoOption,
+  ClivoParams,
+  ClivoWorkflowStep,
+  ClivoWorkflowType,
   parseCli,
   promptMenu,
   promptNumber,
