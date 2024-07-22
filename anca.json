@@ -1,0 +1,38 @@
+{
+  "authors": [
+    {
+      "name": "Timur Moziev",
+      "github": "TimurRin",
+      "email": "timur.moziev@gmail.com",
+      "type": "maintainer",
+      "url": "https://timurrin.github.io/"
+    }
+  ],
+  "cinnabarMeta": {
+    "dataVersion": 0,
+    "version": {
+      "latest": "0.4.0",
+      "timestamp": 1719296576
+    },
+    "files": [
+      {
+        "path": "./package.json",
+        "type": "nodejs-package-json"
+      },
+      {
+        "path": "./package-lock.json",
+        "type": "nodejs-package-lock-json"
+      }
+    ],
+    "repo": {
+      "type": "github",
+      "value": "cinnabar-forge/clivo"
+    },
+    "updateChangelog": true
+  },
+  "development": {
+    "readme": {}
+  },
+  "type": "app",
+  "stack": "nodejs"
+}
