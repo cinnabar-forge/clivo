@@ -26,19 +26,19 @@
     "test": "eslint --max-warnings 0 . && tsc && mocha './build/dev/test'"
   },
   "devDependencies": {
-    "@cinnabar-forge/eslint-plugin": "0.6.0",
+    "@cinnabar-forge/eslint-plugin": "0.6.1",
     "@cinnabar-forge/meta": "0.1.2",
     "@types/chai": "4.3.16",
     "@types/mocha": "10.0.7",
-    "@types/node": "20.14.8",
+    "@types/node": "20.14.11",
     "@types/sinon": "17.0.3",
     "chai": "5.1.1",
-    "mocha": "10.4.0",
+    "mocha": "10.7.0",
     "pre-commit": "1.2.2",
     "sinon": "18.0.0",
     "tsc-watch": "6.2.0",
-    "tsup": "8.1.0",
-    "typescript": "5.5.2"
+    "tsup": "8.2.1",
+    "typescript": "5.5.3"
   },
   "pre-commit": [
     "format",
