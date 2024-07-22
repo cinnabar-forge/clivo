@@ -10,7 +10,10 @@ const emitter = new EventEmitter();
  * @param {string} event - The event to emit.
  * @param {(...args: unknown[]) => void} listener - The listener to call when the event is emitted.
  */
-export function listenClivoEvent(event: string, listener: (...args: unknown[]) => void): void {
+export function listenClivoEvent(
+  event: string,
+  listener: (...args: unknown[]) => void,
+): void {
   emitter.on(event, listener);
 }
 

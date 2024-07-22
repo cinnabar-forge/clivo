@@ -33,6 +33,6 @@
   "development": {
     "readme": {}
   },
-  "type": "app",
+  "type": "library",
   "stack": "nodejs"
 }

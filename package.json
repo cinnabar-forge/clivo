@@ -21,10 +21,10 @@
   "scripts": {
     "build": "tsup",
     "build:dev": "tsc",
+    "fix": "prettier . --write && eslint --fix .",
     "format": "prettier . --write",
     "lint": "eslint --fix .",
-    "prepack": "npm run build",
-    "test": "eslint --max-warnings 0 . && tsc && mocha './build/dev/test'"
+    "test": "prettier . -c && eslint --max-warnings 0 . && tsc && mocha './build/dev/test'"
   },
   "devDependencies": {
     "@cinnabar-forge/eslint-plugin": "0.6.1",
@@ -40,6 +40,9 @@
     "tsc-watch": "6.2.0",
     "tsup": "8.2.1",
     "typescript": "5.5.3"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "pre-commit": [
     "format",

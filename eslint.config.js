@@ -1,17 +1,20 @@
 import cinnabarPlugin from "@cinnabar-forge/eslint-plugin";
 
+const files = ["src/**/*.ts"];
+const ignores = ["bin/**/*", "build/**/*", "dist/**/*"];
+
 export default [
   ...cinnabarPlugin.default.map((config) => ({
     ...config,
-    files: ["src/**/*.ts"],
+    files,
   })),
   {
-    files: ["src/**/*.ts"],
+    files,
     rules: {
       "security/detect-object-injection": "off",
     },
   },
   {
-    ignores: ["bin/**/*", "build/**/*", "dist/**/*"],
+    ignores,
   },
 ];

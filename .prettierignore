@@ -14,8 +14,14 @@
 package-lock.json
 
 # Distributions
+/build
 /dist
 
-# Cinnabar Forge
-cinnabar.js
+# Cinnabar Meta
+**/cinnabar.js
+**/cinnabar.ts
 cinnabar.json
+CHANGELOG.md
+
+# Anca
+anca.json
