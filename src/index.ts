@@ -1,5 +1,6 @@
 import { parseCli } from "./cli.js";
 import {
+  listenClivoEvent,
   promptMenu,
   promptNumber,
   promptOptions,
@@ -24,6 +25,7 @@ export {
   ClivoParams,
   ClivoWorkflowStep,
   ClivoWorkflowType,
+  listenClivoEvent,
   parseCli,
   promptMenu,
   promptNumber,

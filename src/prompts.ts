@@ -1,6 +1,30 @@
+import { EventEmitter } from "events";
 import readline from "readline";
 
 import { ClivoAction, ClivoChoice, ClivoWorkflowStep } from "./types.js";
+
+const emitter = new EventEmitter();
+
+/**
+ * Emits an event to listeners.
+ * @param {string} event - The event to emit.
+ * @param {(...args: unknown[]) => void} listener - The listener to call when the event is emitted.
+ */
+export function listenClivoEvent(event: string, listener: (...args: unknown[]) => void): void {
+  emitter.on(event, listener);
+}
+
+/**
+ * Registers signal listeners to handle SIGINT.
+ * @param {readline.Interface} readlineInterface - The readline interface to listen for signals on.
+ */
+function registerSignals(readlineInterface: readline.Interface) {
+  const sigintListener = (): void => {
+    emitter.emit("clivoCancel");
+    readlineInterface.close();
+  };
+  readlineInterface.on("SIGINT", sigintListener);
+}
 
 /**
  * Prompts the user to select an option from a list of choices.
@@ -27,6 +51,8 @@ export async function promptOptions(
         console.log(`${index + 1}. ${choice.label ?? choice.name}`);
       });
 
+      registerSignals(rl);
+
       rl.question("Select an option: ", (answer) => {
         const choiceIndex = parseInt(answer, 10) - 1;
         rl.close();
@@ -52,6 +78,8 @@ export async function promptText(message: string): Promise<string> {
       output: process.stdout,
     });
 
+    registerSignals(rl);
+
     rl.question(`${message}: `, (answer) => {
       rl.close();
       resolve(answer);
@@ -74,6 +102,8 @@ export async function promptNumber(message: string): Promise<number> {
         input: process.stdin,
         output: process.stdout,
       });
+
+      registerSignals(rl);
 
       rl.question(`${message}: `, (answer) => {
         rl.close();
