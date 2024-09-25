@@ -8,6 +8,17 @@ Visit the link above to see all unreleased changes.
 
 [comment]: # (Insert new version after this line)
 
+## [0.5.2](https://github.com/cinnabar-forge/clivo/releases/tag/v0.5.2) — 2024-09-25
+
+- comply anca ([66fcc2c])
+- update npm packages ([c2b186c])
+- update npm vulnerable packages ([269e5f3])
+
+[269e5f3]: https://github.com/cinnabar-forge/clivo/commit/269e5f3
+[c2b186c]: https://github.com/cinnabar-forge/clivo/commit/c2b186c
+[66fcc2c]: https://github.com/cinnabar-forge/clivo/commit/66fcc2c
+
+
 ## [0.5.1](https://github.com/cinnabar-forge/clivo/releases/tag/v0.5.1) — 2024-07-22
 
 - [[14449db]] fix prepack script
@@ -30,4 +41,4 @@ Visit the link above to see all unreleased changes.
 [68767ec]: https://github.com/cinnabar-forge/clivo/commit/68767ec
 
 
-[unreleased]: https://github.com/cinnabar-forge/clivo/compare/v0.5.1...HEAD
+[unreleased]: https://github.com/cinnabar-forge/clivo/compare/v0.5.2...HEAD
